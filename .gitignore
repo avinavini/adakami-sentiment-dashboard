@@ -1,0 +1,20 @@
+# Data files not needed by dashboard
+data/*.pkl
+data/*.npz
+data/*.npy
+data/ulasan_adakami_2025_raw.csv
+data/ulasan_adakami_2025_preprocessed.csv
+data/anotasi_*.csv
+data/frekuensi_kata_negatif.csv
+
+# Notebooks and generated outputs
+notebooks/
+output/
+scripts/
+generate_en_figures.py
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+__pycache__/
+*.pyc
