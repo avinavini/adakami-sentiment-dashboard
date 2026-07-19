@@ -17,6 +17,8 @@ import matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from collections import Counter
 
+from data_adapter import normalize_external_reviews
+
 # ─────────────────────────────────────────────────────────────────
 # PAGE CONFIG
 # ─────────────────────────────────────────────────────────────────
@@ -189,6 +191,12 @@ p  { font-size:.88rem; color:#334155; }
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 
+uploaded_reviews = st.sidebar.file_uploader(
+    "Upload CSV ulasan sosial",
+    type=["csv"],
+    help="Menerima kolom text, tweet_text, review, comment, sentiment, dan created_at.",
+)
+
 C = dict(
     Positif="#22c55e", Negatif="#f43f5e", Netral="#f59e0b",
     NBC="#3b82f6", SVM="#8b5cf6", RF="#10b981", Baseline="#94a3b8",
@@ -215,10 +223,31 @@ CM = {
 # DATA LOADERS
 # ─────────────────────────────────────────────────────────────────
 @st.cache_data(show_spinner=False)
-def load_data():
+def load_default_data():
     df = pd.read_csv(os.path.join(DATA_DIR, "ulasan_dengan_prediksi.csv"))
     df["bulan"] = df["bulan"].astype(int)
     return df
+
+def load_data(uploaded_file=None):
+    df = load_default_data().copy()
+    if uploaded_file is None:
+        return df
+
+    try:
+        external = normalize_external_reviews(pd.read_csv(uploaded_file))
+    except (pd.errors.EmptyDataError, pd.errors.ParserError, UnicodeDecodeError):
+        st.sidebar.error("CSV tidak dapat dibaca. Periksa format dan encoding file.")
+        return df
+    except ValueError as exc:
+        st.sidebar.error(str(exc))
+        return df
+
+    if external.empty:
+        st.sidebar.warning("CSV tidak memiliki baris teks yang dapat dianalisis.")
+        return df
+
+    st.sidebar.success(f"Menambahkan {len(external):,} baris CSV sosial.")
+    return pd.concat([df, external], ignore_index=True)
 
 @st.cache_data(show_spinner=False)
 def monthly_pivot(df: pd.DataFrame) -> pd.DataFrame:
@@ -235,15 +264,15 @@ def monthly_pivot(df: pd.DataFrame) -> pd.DataFrame:
     return cnt.sort_values("bs")
 
 @st.cache_data(show_spinner=False)
-def word_freq(b0: int, b1: int) -> Counter:
-    neg = _df[(_df["sentimen_prediksi"]=="Negatif")&(_df["bulan"]>=b0)&(_df["bulan"]<=b1)]
+def word_freq(df: pd.DataFrame, b0: int, b1: int) -> Counter:
+    neg = df[(df["sentimen_prediksi"]=="Negatif")&(df["bulan"]>=b0)&(df["bulan"]<=b1)]
     c = Counter()
     for t in neg["teks_bersih"].dropna():
         c.update(str(t).split())
     return c
 
 with st.spinner("Memuat data…"):
-    _df = load_data()
+    _df = load_data(uploaded_reviews)
     _mp = monthly_pivot(_df)
 
 # ─────────────────────────────────────────────────────────────────
@@ -816,7 +845,7 @@ elif page == "Topik Negatif":
         st.stop()
 
     with st.spinner("Menghitung frekuensi kata…"):
-        ctr = word_freq(bs_, be_)
+        ctr = word_freq(_df, bs_, be_)
     top_w = dict(ctr.most_common(top_n))
 
     df_neg = _df[(_df["sentimen_prediksi"]=="Negatif") &
