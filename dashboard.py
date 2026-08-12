@@ -301,7 +301,7 @@ PAGES = [
     ("📊", "Distribusi Sentimen"),
     ("📈", "Tren Temporal"),
     ("🤖", "Perbandingan Algoritma"),
-    ("🔍", "Topik Negatif"),
+    ("🔍", "Topik Dominan Negatif"),
 ]
 if "page" not in st.session_state:
     st.session_state.page = "Beranda"
@@ -451,10 +451,10 @@ if page == "Beranda":
     sec("Jelajahi Dashboard")
     n1,n2,n3,n4 = st.columns(4)
     nav = [
-        ("📊","Distribusi Sentimen","RQ1","Proporsi & perbandingan label vs prediksi","#22c55e","#dcfce7","#15803d"),
+        ("📊","Distribusi Sentimen","RQ2","Proporsi & perbandingan label vs prediksi","#22c55e","#dcfce7","#15803d"),
         ("📈","Tren Temporal","RQ2","Fluktuasi sentimen per bulan + tabel data","#3b82f6","#dbeafe","#1e40af"),
-        ("🤖","Perbandingan Algoritma","RQ3","NBC vs SVM vs RF · metrik + confusion matrix","#8b5cf6","#ede9fe","#6d28d9"),
-        ("🔍","Topik Negatif","RQ4","Word cloud + frekuensi kata + cari contoh ulasan","#f43f5e","#fee2e2","#dc2626"),
+        ("🤖","Perbandingan Algoritma","RQ1","NBC vs SVM vs RF · metrik + confusion matrix","#8b5cf6","#ede9fe","#6d28d9"),
+        ("🔍","Topik Dominan Negatif","Business Understanding","Word cloud + frekuensi kata + cari contoh ulasan","#f43f5e","#fee2e2","#dc2626"),
     ]
     for col_, (ico,title,rq,desc,ac,bg,fg) in zip([n1,n2,n3,n4], nav):
         with col_:
@@ -468,7 +468,7 @@ if page == "Beranda":
 </div>""", unsafe_allow_html=True)
 
 # ═════════════════════════════════════════════════════════════════
-# DISTRIBUSI SENTIMEN (RQ1)
+# DISTRIBUSI SENTIMEN (RQ2)
 # ═════════════════════════════════════════════════════════════════
 elif page == "Distribusi Sentimen":
     banner("📊","Distribusi Sentimen Ulasan AdaKami",
@@ -639,7 +639,7 @@ elif page == "Tren Temporal":
         "Pola ini bersifat <b>struktural</b>, bukan reaktif terhadap satu insiden.", "info")
 
 # ═════════════════════════════════════════════════════════════════
-# PERBANDINGAN ALGORITMA (RQ3)
+# PERBANDINGAN ALGORITMA (RQ1)
 # ═════════════════════════════════════════════════════════════════
 elif page == "Perbandingan Algoritma":
     banner("🤖","Perbandingan Algoritma NBC, SVM, dan RF",
@@ -787,9 +787,9 @@ elif page == "Perbandingan Algoritma":
                            "#fef3c7","#b45309","","#f59e0b")
 
 # ═════════════════════════════════════════════════════════════════
-# TOPIK NEGATIF (RQ4)
+# TOPIK DOMINAN NEGATIF (Business Understanding)
 # ═════════════════════════════════════════════════════════════════
-elif page == "Topik Negatif":
+elif page == "Topik Dominan Negatif":
     banner("🔍","Topik Dominan pada Ulasan Negatif AdaKami",
            "Bagaimana mengembangkan dashboard visualisasi yang dapat menyajikan "
            "distribusi sentimen, tren temporal, dan topik dominan pada ulasan negatif "
