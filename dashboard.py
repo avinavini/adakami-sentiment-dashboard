@@ -435,12 +435,11 @@ if page == "Beranda":
 </table>
 <div style="border-top:1px solid #f1f5f9;margin:12px 0 10px;"></div>
 <div style="font-size:.82rem;color:#475569;">
-  <b style="color:#0f172a;">4 Rumusan Masalah</b>
+  <b style="color:#0f172a;">3 Rumusan Masalah</b>
   <ol style="margin:7px 0 0;padding-left:16px;line-height:2.1;color:#64748b;">
-    <li>Distribusi sentimen pengguna AdaKami</li>
-    <li>Tren sentimen temporal Jan–Des 2025</li>
-    <li>Algoritma klasifikasi terbaik</li>
-    <li>Dashboard visualisasi temuan</li>
+    <li>Algoritma klasifikasi terbaik: NBC vs SVM vs RF</li>
+    <li>Pola distribusi dan tren sentimen sepanjang 2025</li>
+    <li>Dashboard visualisasi sebagai sarana pemantauan</li>
   </ol>
 </div>
             """, unsafe_allow_html=True)
