@@ -55,13 +55,16 @@ html, body, [class*="css"] { font-family: 'Plus Jakarta Sans', sans-serif !impor
 }
 
 /* ── Sidebar nav buttons ── */
-[data-testid="stSidebar"] .stButton { margin: 1px 8px !important; }
+[data-testid="stSidebar"] [data-testid="stVerticalBlock"] { gap: .25rem !important; }
+[data-testid="stSidebar"] .stButton { margin: 0 8px !important; }
 [data-testid="stSidebar"] .stButton > button {
     width: 100% !important;
+    min-height: 0 !important;
     background: transparent !important;
-    border: 1.5px solid transparent !important;
+    border: 1px solid transparent !important;
     border-radius: 8px !important;
-    padding: 9px 14px !important;
+    padding: 8px 14px !important;
+    justify-content: flex-start !important;
     text-align: left !important;
     font-family: 'Plus Jakarta Sans', sans-serif !important;
     font-size: .85rem !important;
@@ -71,6 +74,8 @@ html, body, [class*="css"] { font-family: 'Plus Jakarta Sans', sans-serif !impor
     transition: all .15s ease !important;
     box-shadow: none !important;
 }
+[data-testid="stSidebar"] .stButton > button > div { width: 100% !important; justify-content: flex-start !important; }
+[data-testid="stSidebar"] .stButton > button p { text-align: left !important; font-size: .85rem !important; }
 [data-testid="stSidebar"] .stButton > button:hover {
     background: #1e293b !important;
     color: #e2e8f0 !important;
@@ -80,11 +85,14 @@ html, body, [class*="css"] { font-family: 'Plus Jakarta Sans', sans-serif !impor
     box-shadow: none !important;
     outline: none !important;
 }
-/* Active nav button */
-[data-testid="stSidebar"] .stButton > button[kind="secondary"] {
+/* Active nav button: semua menu memakai st.button, yang aktif type="primary" */
+[data-testid="stSidebar"] .stButton > button[kind="primary"] {
     background: rgba(59,130,246,.18) !important;
-    color: #93c5fd !important;
-    border-color: rgba(59,130,246,.4) !important;
+    font-weight: 600 !important;
+    cursor: default !important;
+}
+[data-testid="stSidebar"] .stButton > button[kind="primary"] p {
+    color: #e2e8f0 !important;
     font-weight: 600 !important;
 }
 
@@ -329,22 +337,12 @@ with st.sidebar:
 
     for name in PAGES:
         is_active = (st.session_state.page == name)
-        # Active page uses "secondary" kind so CSS can target it differently
+        # Active page uses "primary" kind so CSS can target it differently
         label = name
-        if is_active:
-            # Render active button with special styling via markdown
-            st.markdown(f"""
-            <div style="margin:1px 8px;">
-              <div style="background:rgba(59,130,246,.18);border:1.5px solid rgba(59,130,246,.4);
-                          border-radius:8px;padding:9px 14px;font-size:.85rem;font-weight:600;
-                          color:#93c5fd;cursor:default;font-family:'Plus Jakarta Sans',sans-serif;">
-                {name}
-              </div>
-            </div>""", unsafe_allow_html=True)
-        else:
-            if st.button(label, key=f"nav_{name}", use_container_width=True):
-                st.session_state.page = name
-                st.rerun()
+        if st.button(label, key=f"nav_{name}", use_container_width=True,
+                     type="primary" if is_active else "secondary") and not is_active:
+            st.session_state.page = name
+            st.rerun()
 
     n_pos = (_df["sentimen_prediksi"]=="Positif").sum()
     n_neg = (_df["sentimen_prediksi"]=="Negatif").sum()
